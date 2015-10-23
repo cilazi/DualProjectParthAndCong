@@ -69,7 +69,7 @@ public class PlayerHealth : MonoBehaviour
 
 		// Reduce the player's health by 10.
 		health -= damageAmount;
-        damageAmount += 10;
+        //damageAmount += 10;
         anger = 100 - health;
 
 		// Update what the health bar looks like.
