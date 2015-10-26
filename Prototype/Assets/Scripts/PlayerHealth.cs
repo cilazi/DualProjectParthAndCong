@@ -7,8 +7,11 @@ public class PlayerHealth : MonoBehaviour
     public float anger = 0f;
     public float repeatDamagePeriod = 2f;		// How frequently the player can be damaged.
 	public AudioClip[] ouchClips;				// Array of clips to play when the player is damaged.
+
+    public AudioClip[] angerClips;              // Array of clips to play when the player is angry
+
 	public float hurtForce = 10f;				// The force with which the player is pushed when hurt.
-	public float damageAmount = 10f;			// The amount of damage to take when enemies touch the player
+	public float damageAmount = 20f;			// The amount of damage to take when enemies touch the player
 
 	private SpriteRenderer healthBar;           // Reference to the sprite renderer of the health bar.
     private SpriteRenderer angerBar;
@@ -16,10 +19,27 @@ public class PlayerHealth : MonoBehaviour
 	private Vector3 healthScale;                // The local scale of the health bar initially (with full health).
     private Vector3 angerScale;
     private PlayerControl playerControl;		// Reference to the PlayerControl script.
-	private Animator anim, anim1;						// Reference to the Animator on the player
+	private Animator anim, anim1;                       // Reference to the Animator on the player
+
+    private float lastRoared;                   // Last time the character roared for anger
+    private float roarInterval = 1f;                 // Interval time between each roar
+
+    void Intialize()
+    {
+        health = 100 - anger;
+
+        //anger = 100 - health;
+
+        // Update what the health bar looks like.
+        UpdateHealthBar();
+        UpdateAngerBar();
+        UpdateAbility();
 
 
-	void Awake ()
+        MakeAngerVoice();
+    }
+
+    void Awake ()
 	{
 		// Setting up references.
 		playerControl = GetComponent<PlayerControl>();
@@ -31,8 +51,36 @@ public class PlayerHealth : MonoBehaviour
         angerBar = GameObject.Find("AngerBar").GetComponent<SpriteRenderer>();
         anim1 = GetComponent<Animator>();
         angerScale = angerBar.transform.localScale;
-	}
 
+        //
+        lastRoared = Time.time;
+
+        Intialize();
+    }
+
+    
+
+    void Update()
+    {
+        //Debug.Log("update");
+        //UpdateAngerVoice();
+    }
+
+
+
+
+
+    public void MakeAngerVoice()
+    {
+        if (anger < 20||anger>100)
+            return;
+        if (Time.time - lastRoared < roarInterval)
+            return;
+        //int i = (int)anger / 20;
+        lastRoared = Time.time;
+        AudioSource.PlayClipAtPoint(angerClips[(int)anger/20-1],transform.position);
+
+    }
 
 	void OnCollisionEnter2D (Collision2D col)
 	{
@@ -55,6 +103,7 @@ public class PlayerHealth : MonoBehaviour
 		}
 	}
 
+    
 
 	public void TakeDamage (Transform enemy)
 	{
@@ -77,10 +126,13 @@ public class PlayerHealth : MonoBehaviour
         UpdateAngerBar();
         UpdateAbility();
 
-		// Play a random clip of the player getting hurt.
-		int i = Random.Range (0, ouchClips.Length);
-		AudioSource.PlayClipAtPoint(ouchClips[i], transform.position);
-	}
+        // Play a random clip of the player getting hurt.
+        //int i = Random.Range (0, ouchClips.Length);
+        //AudioSource.PlayClipAtPoint(ouchClips[i], transform.position);
+
+        // Play anger voice instead of ouch voice
+        MakeAngerVoice();
+    }
 
 
 	public void UpdateHealthBar ()

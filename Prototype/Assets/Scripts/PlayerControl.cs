@@ -17,6 +17,7 @@ public class PlayerControl : MonoBehaviour
 	public float tauntProbability = 50f;	// Chance of a taunt happening.
 	public float tauntDelay = 1f;			// Delay for when the taunt should happen.
 
+    public PlayerHealth m_PlayerHealth;
 
 	private int tauntIndex;					// The index of the taunts array indicating the most recent taunt.
 	private Transform groundCheck;			// A position marking where to check if the player is grounded.
@@ -80,9 +81,11 @@ public class PlayerControl : MonoBehaviour
 			// Set the Jump animator trigger parameter.
 			anim.SetTrigger("Jump");
 
-			// Play a random jump audio clip.
-			int i = Random.Range(0, jumpClips.Length);
-			AudioSource.PlayClipAtPoint(jumpClips[i], transform.position);
+            // Play a random jump audio clip.
+            //int i = Random.Range(0, jumpClips.Length);
+            //AudioSource.PlayClipAtPoint(jumpClips[i], transform.position);
+
+            m_PlayerHealth.MakeAngerVoice();
 
 			// Add a vertical force to the player.
 			GetComponent<Rigidbody2D>().AddForce(new Vector2(0f, jumpForce));
