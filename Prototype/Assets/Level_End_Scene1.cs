@@ -15,6 +15,6 @@ public class Level_End_Scene1 : MonoBehaviour {
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        Application.LoadLevelAsync("Prototype_Scene2");
+        Application.LoadLevelAsync("Prototype_Scene3");
     }
 }
